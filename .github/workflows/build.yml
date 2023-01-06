@@ -1,0 +1,120 @@
+name: Build
+on:
+  push:
+    branches:
+      - master
+      - develop
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  build-docker:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - run: cd 05-k8s-redis-cli && docker build . -t redis-stack:$(date +%s)
+
+  terraform:
+    strategy:
+      matrix:
+        path: [01-vpc, 02-gke-cluster, 03-memorystore-direct-peering, 04-memorystore-psa]
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: HashiCorp - Setup Terraform
+      uses: hashicorp/setup-terraform@v2.0.3
+    - run: terraform fmt -check
+      id: fmt
+      working-directory: ${{ matrix.path }}
+    - run: terraform init
+      working-directory: ${{ matrix.path }}
+      id: init
+    - run: terraform validate -no-color
+      working-directory: ${{ matrix.path }}
+      id: validate
+    - name: 'Authenticate to Google Cloud'
+      uses: 'google-github-actions/auth@v1'
+      with:
+        credentials_json: '${{ secrets.SA }}'
+    - name: Replace project-id
+      uses: jacobtomlinson/gha-find-replace@v2
+      with:
+        find: "<dev-stage-project-id>"
+        replace: ${{ secrets.PROJECT_ID }}
+        include: "*.tfvars"
+        regex: false
+    - name: Terraform Plan
+      id: plan
+      if: matrix.path != 'src/tf/workload-identity'
+      run: terraform plan -var-file=vars/dev.tfvars -no-color
+      working-directory: ${{ matrix.path }}
+    - uses: actions/github-script@v6
+      if: github.event_name == 'pull_request'
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          const output = `#### Working Directory: ${{ matrix.path }}
+
+          #### Terraform Format and Style \`${{ steps.fmt.outcome }}\`
+          
+          #### Terraform Initialization \`${{ steps.init.outcome }}\`
+          
+          #### Terraform Validation \`${{ steps.validate.outcome }}\`
+
+          <details><summary>Validation Output</summary>
+
+          \`\`\`\n
+          ${{ steps.validate.outputs.stdout }}
+          \`\`\`
+
+          </details>
+
+          #### Terraform Plan \`${{ steps.plan.outcome }}\`
+
+          <details><summary>Show Plan</summary>
+
+          \`\`\`\n
+          ${{ steps.plan.outputs.stdout }}
+          \`\`\`
+
+          </details>`;
+
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: output
+          });
+
+  sonarqube:
+    runs-on: ubuntu-latest
+    env:
+      GCS_BUCKET_NAME: "${{ secrets.GOOGLE_CLOUD_PROJECT }}-bucket-api"
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Set up JDK 11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - name: Cache SonarCloud packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+      - name: Cache Gradle packages
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle', '**/gradle-wrapper.properties') }}
+          restore-keys: ${{ runner.os }}-gradle
+      - name: Build and analyze
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: ./gradlew build sonarqube --info
+          

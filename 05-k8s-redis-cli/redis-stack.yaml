@@ -1,0 +1,44 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-stack
+  namespace: redis
+  annotations:
+    app: 'redis-stack'
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis-stack
+  template:
+    metadata:
+      labels:
+        app: redis-stack
+    spec:
+      containers:
+        - name: redis-stack
+          image: gcr.io/moloco-sre/redis-stack:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 6379
+          resources:
+            requests:
+              cpu: "0.5"
+              memory: "512Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-stack
+  namespace: redis
+  annotations:
+    app: 'redis-stack'
+spec:
+  selector:
+    app: redis-stack
+  type: ClusterIP
+  ports:
+    - port: 6379
+      targetPort: 6379
+      protocol: TCP
