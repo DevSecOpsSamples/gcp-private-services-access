@@ -1,5 +1,8 @@
 # GCP Private Services Access
 
+[![Build](https://github.com/DevSecOpsSamples/gcp-private-services-access/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/DevSecOpsSamples/gcp-private-services-access/actions/workflows/build.yml)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=DevSecOpsSamples_gcp-private-services-access&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=DevSecOpsSamples_gcp-private-services-access) [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=DevSecOpsSamples_gcp-private-services-access&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=DevSecOpsSamples_gcp-private-services-access) [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=DevSecOpsSamples_gcp-private-services-access&metric=coverage)](https://sonarcloud.io/summary/new_code?id=DevSecOpsSamples_gcp-private-services-access)
+
 ## Overview
 
 Understand the Private Services Access for GKE and Memorystore in VPC.
