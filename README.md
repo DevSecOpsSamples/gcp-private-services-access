@@ -158,11 +158,11 @@ kubectl apply -f redis-stack.yaml -n redis
 Confirm that connectivity from Pod to Memorystore instance with redis-cli:
 
 ```bash
-PSA_REDIS_HOST=$(gcloud redis instances describe redis-psa-dev --region=us-central1 | grep host | cut -d' ' -f2)
-echo $PSA_REDIS_HOST
-
 DP_REDIS_HOST=$(gcloud redis instances describe redis-directpeering-dev --region=us-central1 | grep host | cut -d' ' -f2)
 echo $DP_REDIS_HOST
+
+PSA_REDIS_HOST=$(gcloud redis instances describe redis-psa-dev --region=us-central1 | grep host | cut -d' ' -f2)
+echo $PSA_REDIS_HOST
 ```
 
 Run the command in Pod:
