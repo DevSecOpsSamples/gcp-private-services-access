@@ -1,0 +1,93 @@
+plugins {
+	id 'base'
+  	id "org.sonarqube" version "3.4.0.2513"
+}
+
+// Provide tasks to running commands on multi-platform
+// ./gradlew build
+// ./gradlew clean
+// ./gradlew tfinit --info
+// ./gradlew fmt --info
+
+task build(overwrite: true, dependsOn:['tfinit'])
+
+clean.doLast {
+    delete "${rootDir}/05-k8s-redis-cli/redis-stack.yaml"
+    def dirs = new File(".").listFiles().each {
+        if (it.directory && new File(it, 'main.tf').exists()) {
+            println "clean terraform: ${it}/.terraform"
+            delete "${it}/.terraform"
+            delete "${it}/.terraform.lock.hcl"
+        }
+    }
+}
+
+task tfinit {
+    doLast {    
+        def dirs = new File(".").listFiles().each {
+            if (!(it.directory && new File(it, 'main.tf').exists())) {
+                return;
+            }
+            def workDir = it
+            println "clean terraform: ${workDir}"
+            exec {
+                def cmd = "terraform -chdir='${workDir}' workspace select stg || terraform -chdir='${workDir}' workspace new stg"
+                println "Create or select 'stg' workspace: ${cmd}"
+                executable "sh"
+                args "-c", cmd
+            }
+            exec {
+                def cmd = "terraform -chdir='${workDir}' workspace select dev || terraform -chdir='${workDir}' workspace new dev"
+                println "Create or select 'dev' workspace: ${cmd}"
+                executable "sh"
+                args "-c", cmd
+            }
+            exec {
+                def cmd = "terraform -chdir='${workDir}' workspace list"
+                println "Workspace list: ${cmd}"
+                executable "sh"
+                args "-c", cmd
+            }
+            exec {
+                println "terraform init: ${workDir}"
+                executable "sh"
+                args "-c", "terraform -chdir='${workDir}' init"
+            }
+            exec {
+                println "terraform validate: ${workDir}"
+                executable "sh"
+                args "-c", "terraform -chdir='${workDir}' validate"
+            }
+        }
+    }
+}
+
+task fmt {
+    doLast {
+        exec {
+            println "terraform format: ./*"
+            executable "sh"
+            args "-c", "terraform fmt -recursive ."
+        }
+    }
+}
+
+sonarqube {
+    properties {
+        property "sonar.projectName", "gcp-private-services-access"
+	    property "sonar.projectKey", "DevSecOpsSamples_gcp-private-services-access"
+        property "sonar.organization", "devsecopssamples"
+        // property "sonar.host.url", "http://127.0.0.1:9000"
+        property "sonar.host.url", "https://sonarcloud.io"
+        property "sonar.sourceEncoding", "UTF-8"
+        property "sonar.sources", "."
+        property "sonar.python.version", "3.9"
+        property "sonar.coverage.jacoco.xmlReportPaths", "build/test-result.xml"
+        property "sonar.python.coverage.reportPaths", "build/test-coverage.xml"
+        property "sonar.exclusions", "build/**, gha-creds-*.json, .*sa"
+        property "sonar.issue.ignore.multicriteria", "e1"
+        property "sonar.issue.ignore.multicriteria.e1.ruleKey", "terraform:S6404"
+        property "sonar.issue.ignore.multicriteria.e1.resourceKey", "**/*.tf"
+        property "sonar.links.ci", "https://github.com/DevSecOpsSamples/gcp-private-services-access/actions"
+    }
+}
