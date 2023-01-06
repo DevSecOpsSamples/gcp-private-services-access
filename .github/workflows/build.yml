@@ -88,8 +88,6 @@ jobs:
 
   sonarqube:
     runs-on: ubuntu-latest
-    env:
-      GCS_BUCKET_NAME: "${{ secrets.GOOGLE_CLOUD_PROJECT }}-bucket-api"
     steps:
       - uses: actions/checkout@v3
         with:
