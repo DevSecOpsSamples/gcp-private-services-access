@@ -304,6 +304,10 @@ terraform -chdir='02-gke-cluster' destroy -var-file=vars/stg.tfvars
 terraform -chdir='01-vpc' destroy -var-file=vars/stg.tfvars
 ```
 
+```bash
+./gradlew clean
+```
+
 ### References
 
 - GCP
