@@ -13,7 +13,7 @@ build
 *.rar
 
 # MAC
-# **/.DS_Store
+**/.DS_Store
 
 # internal
 *internal*
@@ -30,8 +30,8 @@ gha-creds-*.json
 
 # terraform
 .terraform
-# *.tfstate
-# *.tfstate.*
+*.tfstate
+*.tfstate.*
 crash.log
 crash.*.log
 *.tfvars
