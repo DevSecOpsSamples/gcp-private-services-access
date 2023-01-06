@@ -88,6 +88,6 @@ sonarqube {
         property "sonar.issue.ignore.multicriteria", "e1"
         property "sonar.issue.ignore.multicriteria.e1.ruleKey", "terraform:S6404"
         property "sonar.issue.ignore.multicriteria.e1.resourceKey", "**/*.tf"
-        property "sonar.links.ci", "https://github.com/DevSecOpsSamples/gke-workload-identity/actions"
+        property "sonar.links.ci", "https://github.com/DevSecOpsSamples/gcp-private-services-access/actions"
     }
 }
