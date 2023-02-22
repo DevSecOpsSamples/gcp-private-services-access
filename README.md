@@ -5,15 +5,15 @@
 
 ## Overview
 
-Understand the Private Services Access for GKE and Memorystore in VPC.
+Private Services Access(PSA) enables private connectivity from a Virtual Private Cloud (VPC) network to Google-managed services using an internal IP address **to access GCP services securely**. This article explores Private Services Access (PSA) and two networking modes using GKE and Memorystore.
 
 ## Objectives
 
-You will learn the following:
+By the end of this article, you will learn the following:
 
-- Private networking with VPC peering on GKE
-- Difference of networking mode between `DIRECT_PEERING` and `PRIVATE_SERVICE_ACCESS` in Memorystore
-- Infrastructure provisioning for VPC private networking using Terraform
+- How to set up private networking with VPC peering on GKE
+- The difference between `DIRECT_PEERING` and `PRIVATE_SERVICE_ACCESS` networking modes for Memorystore
+- How to provision infrastructure for VPC private networking and Memorystore using Terraform
 
 ## Table of Contents
 
