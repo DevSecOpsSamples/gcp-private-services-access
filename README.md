@@ -23,7 +23,7 @@ This article will cover the following topics:
 - [Step4: Creating a Memorystore with PRIVATE_SERVICE_ACCESS mode](#step4-creating-a-memorystore-with-private_service_access-mode)
 - [Step5: Deploying the redis-cli Pod for connectivity testing from GKE cluster to Memorystore instance](#step5-deploying-the-redis-cli-pod-for-connectivity-testing-from-gke-cluster-to-memorystore-instance)
 - [Step6: Testing Connectivity](#step6-testing-connectivity-from-pod-to-memorystore-instance)
-- [Compare two VPC configurations](#compare-two-vpc-configurations)
+- [Comparing Two VPC Configurations](#comparing-two-vpc-configurations)
 - [Screenshots](#screenshots)
 - [Cleanup](#cleanup)
 - [References](#references)
@@ -176,7 +176,7 @@ root@redis-stack-8565f88fdf-n4tll:/# redis-cli -h 172.19.128.4 -p 6379 PING
 PONG
 ```
 
-### Compare two VPC configurations
+### Comparing Two VPC Configurations
 
 If you want to compare VPC configurations, create 2 VPCs with the 'dev' and 'stg' stages in the same GCP project like the following:
 
