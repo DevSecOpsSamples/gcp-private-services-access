@@ -5,7 +5,7 @@
 
 ## Overview
 
-Private Services Access(PSA) enables private connectivity from a Virtual Private Cloud (VPC) network to Google-managed services using an internal IP address **to access GCP services securely**. This article explores Private Services Access (PSA) and two networking modes using GKE and Memorystore.
+Private Services Access(PSA) enables private connectivity from a Virtual Private Cloud (VPC) network to Google-managed services using an internal IP address to access GCP services securel. This article explores `DIRECT_PEERING` and `PRIVATE_SERVICE_ACCESS` networking modes using GKE and Memorystore.
 
 ## Objectives
 
@@ -19,8 +19,8 @@ This article will cover the following topics:
 
 - [Step1: Creating a VPC](#step1-creating-a-vpc)
 - [Step2: Creating a GKE cluster](#step2-creating-a-gke-cluster)
-- [Step3: Creating a Memorystore with DIRECT_PEERING mode](#step3-creating-a-memorystore-with-direct_peering-mode)
-- [Step4: Creating a Memorystore with PRIVATE_SERVICE_ACCESS mode](#step4-creating-a-memorystore-with-private_service_access-mode)
+- [Step3: Creating a Memorystore in DIRECT_PEERING mode](#step3-creating-a-memorystore-in-direct_peering-mode)
+- [Step4: Creating a Memorystore in PRIVATE_SERVICE_ACCESS mode](#step4-creating-a-memorystore-in-private_service_access-mode)
 - [Step5: Deploying the redis-cli Pod for connectivity testing from GKE cluster to Memorystore instance](#step5-deploying-the-redis-cli-pod-for-connectivity-testing-from-gke-cluster-to-memorystore-instance)
 - [Step6: Testing Connectivity](#step6-testing-connectivity-from-pod-to-memorystore-instance)
 - [Comparing Two VPC Configurations](#comparing-two-vpc-configurations)
@@ -36,7 +36,7 @@ This article will cover the following topics:
 
 ## Creating two workspaces and initializes working directories
 
-Run `gradle tfinit` task to create workspaces and initializes working directories.
+To create two workspaces and initialize working directories, run `gradle tfinit`.
 
 ```bash
 ./gradlew tfinit
@@ -87,7 +87,7 @@ gcloud container clusters get-credentials gke-networktest-dev \
        --region=us-central1-a --project ${PROJECT_ID}
 ```
 
-## Step3: Creating a Memorystore with DIRECT_PEERING mode
+## Step3: Creating a Memorystore in DIRECT_PEERING mode
 
 [03-memorystore-direct-peering/main.tf](03-memorystore-direct-peering/main.tf)
 
@@ -103,17 +103,17 @@ terraform apply -var-file=vars/dev.tfvars
 
 Confirm that routing table and VPC peering on https://console.cloud.google.com/networking/networks/details/gke-networktest-dev?pageTab=ROUTES.
 
-Three tasks will be done automatically when creating with 'DIRECT_PEERING' mode:
+When creating in 'DIRECT_PEERING' mode, three tasks will be completed automatically:
 
-1. Assign a CIDR with unused IP range
+1. Assigning an unused IP range to the CIDR
 2. Creating a VPC peering
-3. Add a routing table
+3. Adding a routing table
 
     | Name                           | Description             | Destination IP range | Priority | Next hop|
     |--------------------------------|-------------------|---------------------------------|-----------|-----------|
-    | peering-route-8e5214d760dadaf6 | Auto generated route via peering [redis-peer-207810071261]. | 10.30.40.96/29 | 0 | Network peering servicenetworking-googleapis-com	|
+    | peering-route-8e5214d760dadaf6 | Auto generated route via peering [redis-peer-207810071261]. | 10.30.40.96/29 | 0 | Network peering servicenetworking-googleapis-com |
 
-## Step4: Creating a Memorystore with PRIVATE_SERVICE_ACCESS mode
+## Step4: Creating a Memorystore in PRIVATE_SERVICE_ACCESS mode
 
 [04-memorystore-psa/main.tf](04-memorystore-psa/main.tf)
 
@@ -155,7 +155,7 @@ kubectl apply -f redis-stack.yaml -n redis
 
 ## Step6: Testing connectivity from Pod to Memorystore instance
 
-Confirming connectivity from Pod to Memorystore instance with redis-cli:
+To confirm connectivity from a Pod to a Memorystore instance using redis-cli, use the following commands:
 
 ```bash
 DP_REDIS_HOST=$(gcloud redis instances describe redis-directpeering-dev --region=us-central1 | grep host | cut -d' ' -f2)
@@ -178,7 +178,7 @@ PONG
 
 ### Comparing Two VPC Configurations
 
-If you want to compare VPC configurations, create 2 VPCs with the 'dev' and 'stg' stages in the same GCP project like the following:
+If you want to compare VPC configurations, create two VPCs with 'dev' and 'stg' stages in the same GCP project as follows:
 
 | Mode                   | Resouce      | Resouce Name            | Stage |
 |------------------------|--------------|-------------------------|-------|
