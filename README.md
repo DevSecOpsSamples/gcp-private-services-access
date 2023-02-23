@@ -5,7 +5,7 @@
 
 ## Overview
 
-Private Services Access(PSA) enables private connectivity from a Virtual Private Cloud (VPC) network to Google-managed services using an internal IP address to access GCP services securely. This article explores `DIRECT_PEERING` and `PRIVATE_SERVICE_ACCESS` networking modes using GKE and Memorystore.
+Private Services Access (PSA) enables private connectivity from a Virtual Private Cloud (VPC) network to Google-managed services using an internal IP address to securely access GCP services. This article explores the `DIRECT_PEERING` and `PRIVATE_SERVICE_ACCESS` networking modes using GKE and Memorystore.
 
 ## Objectives
 
