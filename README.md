@@ -9,7 +9,7 @@ Understand the Private Services Access for GKE and Memorystore in VPC.
 
 ## Objectives
 
-You will learn the following:
+You will learn the following: 
 
 - Private networking with VPC peering on GKE
 - Difference of networking mode between `DIRECT_PEERING` and `PRIVATE_SERVICE_ACCESS` in Memorystore
